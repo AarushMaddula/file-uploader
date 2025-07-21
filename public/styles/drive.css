@@ -1,0 +1,52 @@
+.page {
+  
+}
+
+.page-container {
+  margin: 0 auto;
+  max-width: 90rem;
+  padding: 1.5rem 1rem;
+
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: min-content 200px 1fr;
+}
+
+.page-title {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+}
+
+.breadcrumb {
+  padding: 0 0.5rem;
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: end;
+}
+
+.breadcrumb li:not(:last-child)::after {
+  display: inline-block;
+  margin: 0 0.25rem;
+  content: ">";
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid black;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+tbody > tr:hover {
+  background-color: rgb(199, 199, 199);
+}

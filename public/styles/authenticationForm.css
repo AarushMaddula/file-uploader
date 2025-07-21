@@ -1,0 +1,81 @@
+.authenticationFormPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+}
+
+.authenticationFormContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  border: 1px solid black;
+  border-radius: var(--roundness);
+
+  width: 350px;
+
+  padding: 2rem;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+
+}
+
+.authenticationForm > h1 {
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.authenticationForm > p {
+  font-size: 0.875rem;
+  color: #373737;
+}
+
+.authenticationForm > button {
+  padding: 0.75rem 1rem;
+  margin-top: 1.5rem;
+
+  font-weight: 500;
+
+  border: 0px;
+  border-radius: var(--roundness);
+}
+
+.error-list {
+  list-style: none;
+  padding: 10px;
+  background: #ff4b3e;
+  color: white;
+  margin: 10px 0;
+  border-radius: var(--roundness);
+  font-size: 0.875rem;
+}
+
+.authenticationFormField {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.authenticationFormField:last-of-type {
+  margin-bottom: 0.375rem;
+}
+
+.authenticationFormField > label {
+  position: absolute;
+  font-size: 0.875rem;
+  color: rgb(31, 31, 31);
+
+  background-color: white;
+  padding: 0 0.25rem;
+  top: -0.625rem;
+  left: 0.625rem;
+}
+
+.authenticationFormField > input {
+  width: 100%;
+  padding: 0.625rem;
+
+  border: 1px solid black;
+  border-radius: var(--roundness);
+}

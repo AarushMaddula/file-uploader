@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sign Up</title>
+	<link rel="stylesheet" href="/styles/index.css">
+	<link rel="stylesheet" href="/styles/authenticationForm.css">
+</head>
+
+<body class="authenticationFormPage">
+	<div class="authenticationFormContainer">
+		<form action="/sign-up" method="post" class="authenticationForm">
+			<h1>Sign Up</h1>
+
+			<div class="authenticationFormField">
+				<label for="username">Username</label>
+				<input type="text" name="username" id="username" value="<% typeof oldData !== 'undefined' ? oldData.username : ''%>" required>
+			</div>
+
+			<div class="authenticationFormField">
+				<label for="password">Password</label>
+				<input minlength="1" type="password" name="password" id="password" required>
+			</div>
+
+			<div class="authenticationFormField">
+				<label for="confirm-password">Retype Password</label>
+				<input minlength="1" type="password" name="confirm-password" id="confirm-password" required>
+			</div>
+
+			<% if (locals.errors) { %>
+				<ul class="error-list">
+					<% errors.forEach(err => { %>
+						<li><%= err.msg %></li>
+					<% }) %>
+				</ul>
+			<% } %>
+
+			<p>Already have an account? <a href="/log-in">Log in</a></p>
+
+			<button type="submit">Create Account</button>
+		</form>
+
+	</div>
+</body>
+
+</html>

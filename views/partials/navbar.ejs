@@ -1,0 +1,21 @@
+<nav>
+  <div>
+    <div class="navbarRightContainer">
+      <img src="/icons/server-outline.svg">
+      <h1>FileStore</h1>
+    </div>
+  
+    <div class="navbarLeftContainer">
+      <% if ( locals.currentUser ) {%>
+        <div class="profile-dropdown">
+          <button class="profile-button"><%= currentUser.username%></button>
+          <div class="profile-dropdown-content">
+            <a href="/log-out">Log out</a>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/log-in">Log In</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

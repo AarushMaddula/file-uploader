@@ -1,0 +1,42 @@
+{
+  "dependencies": {
+    "@prisma/client": "^6.12.0",
+    "@quixo3/prisma-session-store": "^3.1.13",
+    "@supabase/supabase-js": "^2.52.0",
+    "bcryptjs": "^3.0.2",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.2.1",
+    "multer": "^2.0.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pg": "^8.16.3",
+    "pretty-bytes": "^7.0.0"
+  },
+  "name": "file-uploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx tailwindcss -i ./public/styles.css -o ./public/output.css --watch",
+    "dev": "node app.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AarushMaddula/file-uploader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AarushMaddula/file-uploader/issues"
+  },
+  "homepage": "https://github.com/AarushMaddula/file-uploader#readme",
+  "devDependencies": {
+    "prisma": "^6.12.0"
+  }
+}
