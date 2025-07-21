@@ -1,5 +1,4 @@
 .page {
-  
 }
 
 .page-container {
@@ -7,9 +6,11 @@
   max-width: 90rem;
   padding: 1.5rem 1rem;
 
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  /* display: grid;
   grid-template-columns: 200px 1fr;
-  grid-template-rows: min-content 200px 1fr;
+  grid-template-rows: min-content 200px 1fr; */
 }
 
 .page-title {
@@ -18,7 +19,7 @@
 }
 
 .breadcrumb {
-  padding: 0 0.5rem;
+  padding: 1rem 0.5rem;
 }
 
 .breadcrumb ol {
@@ -27,7 +28,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  align-items: end;
+  font-size: 1rem;
+  align-items: center;
 }
 
 .breadcrumb li:not(:last-child)::after {
@@ -39,14 +41,23 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  border: 1px solid black;
+  border-radius: 1rem;
 }
 
-td, th {
-  border: 1px solid black;
+td,
+th {
+  border: 0px solid black;
   padding: 0.5rem;
   text-align: left;
 }
 
+tbody > tr {
+  border: 1px solid rgb(107, 107, 107);
+  border-radius: 1rem;
+  transition: background-color 100ms;
+}
+
 tbody > tr:hover {
-  background-color: rgb(199, 199, 199);
+  background-color: rgb(227, 227, 227);
 }

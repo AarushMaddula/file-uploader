@@ -1,99 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - FileStore</title>
-  <link rel="stylesheet" href="/styles/index.css">
-  <link rel="stylesheet" href="/styles/navbar.css">
-  <link rel="stylesheet" href="/styles/drive.css">
-</head>
-<body>
-  <%- include("partials/navbar", locals.currentUser) %>
-  <div class="page">
-    <div class="page-container">
-      <header class="page-title">
-        <h1>Home</h1>
-      </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home - FileStore</title>
+    <link rel="stylesheet" href="/styles/index.css" />
+    <link rel="stylesheet" href="/styles/navbar.css" />
+    <link rel="stylesheet" href="/styles/drive.css" />
+  </head>
+  <body>
+    <%- include("partials/navbar", locals.currentUser) %>
+    <div class="page">
+      <div class="page-container">
+        <header class="page-title">
+          <h1>Home</h1>
+        </header>
 
-      <aside>
-        <div class="action-buttons">
-          <button onclick="">
-            <img src="/icons/file-upload-outline.svg" height="25px">
-          </button>
-          
-          <button>
-            <img src="/icons/folder-outline.svg" height="25px">
-          </button>
-          <button>
-            <img src="/icons/link.svg" height="25px">
-          </button>
+        <aside>
+          <div class="action-buttons">
+            <button onclick="">
+              <img src="/icons/file-upload-outline.svg" height="25px" />
+            </button>
 
-          <form method="post" action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/upload" enctype="multipart/form-data">
-            <input type="file" name="uploaded_file">
-            <button type="submit">Submit</button>
-          </form>
+            <button>
+              <img src="/icons/folder-outline.svg" height="25px" />
+            </button>
 
-          <form method="post" action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/create">
-            <input type="text" name="name">
-            <button type="submit">Create</button>
-          </form>
-        </div>
-        
-        <div class="file-hierarchy-section">
-          <h2>Files</h2>
-          <div class="file-hierarchy">
+            <button>
+              <img src="/icons/link.svg" height="25px" />
+            </button>
 
+            <form
+              method="post"
+              action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/upload"
+              enctype="multipart/form-data"
+            >
+              <input type="file" name="uploaded_file" />
+              <button type="submit">Submit</button>
+            </form>
+
+            <form
+              method="post"
+              action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/create"
+            >
+              <input type="text" name="name" />
+              <button type="submit">Create</button>
+            </form>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      <main>
-        <nav aria-label="Breadcrumb" class="breadcrumb">
-          <ol>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Category</a></li>
-            <li><a href="#">Sub Category</a></li>
-            <li><a href="#">Type</a></li>
-            <li><span>Product</span></li>
-          </ol>
-        </nav>
+        <main>
+          <nav aria-label="Breadcrumb" class="breadcrumb">
+            <ol>
+              <% if (locals.links) {%> <% locals.links.forEach((link, index) =>
+              { %> <% if (index < locals.links.length - 1) { %>
+              <li><a href="<%= link.url%>"><%= link.name%></a></li>
+              <% } else {%>
+              <li><span><%= link.name%></span></li>
+              <% }}) %> <% } %>
+            </ol>
+          </nav>
 
-        <table>
-
+          <table>
             <colgroup>
-              <col style="width: auto;">
-              <col span="2" style="width: 200px;">
+              <col style="width: auto" />
+              <col span="2" style="width: 200px" />
             </colgroup>
 
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Size</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Date</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            <% if (locals.files) { %>
-              <% locals.files.forEach(file => { %>
-                <tr>
-                  <td>
-                    <% if (file.folderId) {%>
-                      <a href="/drive/folder/<%= file.folderId%>"><%= file.filename %></a>
-                    <% } else { %>
-                      <%= file.filename %>
-                    <% } %>      
-                  </td>
-                  <td><%= file.size%></td>
-                  <td><%= file.created_at%></td>
-                </tr>
-              <% }) %>
-            <% } %>
-          </tbody>
-        </table>
-      </main>
+            <tbody>
+              <% if (locals.files) { %> <% locals.files.forEach(file => { %>
+              <tr>
+                <td>
+                  <% if (file.folderId) {%>
+                  <a href="/drive/folder/<%= file.folderId%>"
+                    ><%= file.filename %></a
+                  >
+                  <% } else { %> <%= file.filename %> <% } %>
+                </td>
+                <td><%= file.size%></td>
+                <td><%= file.created_at%></td>
+              </tr>
+              <% }) %> <% } %>
+            </tbody>
+          </table>
+        </main>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

@@ -36,4 +36,8 @@ authenticationRouter.get("/sign-up", (req, res) => {
 
 authenticationRouter.post("/sign-up", userController.createUser)
 
+authenticationRouter.get("/{*splat}", async (req, res) => {
+  res.status(404).send("<h1>404 ERROR: PAGE NOT FOUND 😞")
+});
+
 module.exports = authenticationRouter;

@@ -8,14 +8,6 @@ const driveRouter = Router()
 const prettyBytes = require('pretty-bytes').default;
 const storageController = require("../controllers/storageController")
 
-function formatDate(date) {
-  if (isToday(date)) {
-    return format(date, 'h:mm a') // e.g. 2:30 PM
-  } else {
-    return format(date, 'MMM d, yyyy') // e.g. Jul 19, 2025
-  }
-}
-
 const getModifiedFiles = async (userId, folderId) => {
   const files = await storageController.handleRetrieveFiles(userId, folderId);
 
@@ -29,7 +21,7 @@ const getModifiedFiles = async (userId, folderId) => {
 
     return {
       filename: file.name,
-      created_at: formatDate(file.created_at),
+      created_at: format(file.created_at, 'Pp'),
       size: prettyBytes(file.metadata.size),
     }
   })
@@ -50,7 +42,8 @@ driveRouter.get("/my-drive", async (req, res) => {
   const folderId = -1;
   
   const files = await getModifiedFiles(userId, folderId);
-  res.render("drive", { user: req.user, files: files });
+  const links = await storageController.handleRetrievePathLinks(userId, folderId);
+  res.render("drive", { user: req.user, files: files, links: links });
 })
 
 driveRouter.post("/my-drive/create", async (req, res) => {
@@ -58,9 +51,13 @@ driveRouter.post("/my-drive/create", async (req, res) => {
   const folderId = -1;
   const name = req.body.name;
 
-  await storageController.handleCreateFolder(userId, folderId, name);
-
-  res.redirect("/drive/my-drive")
+  try {
+    await storageController.handleCreateFolder(userId, folderId, name);
+    res.status(201).redirect("/drive/my-drive");
+  } catch (err) {
+    console.error("Create folder error:", err.message);
+    res.status(400).redirect("/drive/my-drive");
+  }
 })
 
 driveRouter.post("/my-drive/upload", upload.single('uploaded_file'), async (req, res) => {
@@ -78,7 +75,8 @@ driveRouter.get("/folder/:folder", async (req, res) => {
   const folderId = req.params.folder;
 
   const files = await getModifiedFiles(userId, folderId);
-  res.render("drive", { user: req.user, files: files, folderId: folderId });
+  const links = await storageController.handleRetrievePathLinks(userId, folderId);
+  res.render("drive", { user: req.user, files: files, links: links });
 })
 
 driveRouter.post("/folder/:folder/create", async (req, res) => {
@@ -86,10 +84,13 @@ driveRouter.post("/folder/:folder/create", async (req, res) => {
   const folderId = req.params.folder;
   const name = req.body.name;
 
-  await storageController.handleCreateFolder(userId, folderId, name);
-
-  const files = await getModifiedFiles(userId, folderId);
-  res.render("drive", { user: req.user, files: files });
+  try {
+    await storageController.handleCreateFolder(userId, folderId, name);
+    res.status(201).redirect(`/folder/${folderId}`);
+  } catch (err) {
+    console.error("Create folder error:", err.message);
+    res.status(400).redirect(`/folder/${folderId}`);
+  }
 })
 
 driveRouter.post("/folder/:folder/upload", upload.single('uploaded_file'), async (req, res) => {
@@ -99,8 +100,7 @@ driveRouter.post("/folder/:folder/upload", upload.single('uploaded_file'), async
 
   await storageController.handleUploadFile(userId, folderId, file)
 
-  const files = await getModifiedFiles(userId, folderId);
-  res.status(200).render("drive", { user: req.user, files: files });
+  res.redirect(`/folder/${folderId}`);
 })
 
 driveRouter.get("/", async (req, res) => {
