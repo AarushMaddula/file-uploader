@@ -24,8 +24,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./public/styles.css -o ./public/output.css --watch",
-    "dev": "node app.js --watch"
+    "predev": "npx tailwindcss -i ./public/styles/input.css -o ./public/styles/output.css --watch",
+    "dev": "node --watch app.js"
   },
   "repository": {
     "type": "git",

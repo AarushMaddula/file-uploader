@@ -23,6 +23,36 @@ const fetchFolderPath = async (folderId) => {
   return data.path;
 };
 
+const fetchFilePath = async (fileId) => {
+  const { data, error } = await supabase
+    .from("files")
+    .select()
+    .eq("id", fileId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.log("Error:", error.message, fileId);
+    throw new Error("Error fetching file path");
+  }
+
+  return data.path;
+};
+
+const fetchFile = async (userId, path) => {
+  const { data, error } = await supabase
+    .storage
+    .from(userId)
+    .download(path)
+
+  if (error) {
+    console.log("Error:", error.message, userId, path);
+    throw new Error("Unable to retrieve user files!");
+  }
+
+  return data;
+}
+
 const fetchFiles = async (userId, path) => {
   const { data, error } = await supabase.storage.from(userId).list(path, {
     limit: 100,
@@ -51,7 +81,24 @@ const fetchFolderId = async (userId, path) => {
 
   if (error) {
     console.log("Error:", error.message, userId, path);
-    throw new Error("Unable to retrieve folder path!");
+    throw new Error("Unable to retrieve folder id!");
+  }
+
+  return data.id;
+};
+
+const fetchFileId = async (userId, path) => { 
+  const { data, error } = await supabase
+    .from("files")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("path", path)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.log("Error:", error.message, userId, path);
+    throw new Error("Unable to retrieve file id!");
   }
 
   return data.id;
@@ -72,10 +119,12 @@ const uploadFile = async (userId, path, file) => {
 };
 
 const insertFolder = async (userId, path) => {
-  const { error } = await supabase.from("folders").insert({
-    path: path,
-    user_id: userId,
-  });
+  const { error } = await supabase
+    .from("folders")
+    .insert({
+      path: path,
+      user_id: userId,
+    });
 
   if (error) {
     console.log("Error:", error.message, userId, path);
@@ -83,10 +132,24 @@ const insertFolder = async (userId, path) => {
   }
 };
 
+const insertFile = async (userId, path) => {
+  const { error } = await supabase
+    .from("files")
+    .insert({
+      path: path,
+      user_id: userId,
+    });
+
+  if (error) {
+    console.log("Error:", error.message, userId, path);
+    throw new Error("Error inserting file path");
+  }
+};
+
 const createFolder = async (userId, path) => {
   const { error } = await supabase.storage
     .from(userId)
-    .upload(`${path}/.placeholder`);
+    .upload(`${path}/.emptyFolderPlaceholder`);
 
   if (error) {
     console.log("Error:", error.message, userId, path);
@@ -116,7 +179,7 @@ exports.handleCreateFolder = async (userId, folderId, name) => {
     name || "folder"
   }`;
 
-  const folderExists = await fetchFolderId(folderPath);
+  const folderExists = (await fetchFolderId(folderPath)) !== -1;
   if (folderExists) throw new Error("Folder Already Exists!");
 
   await insertFolder(userId, folderPath);
@@ -129,23 +192,36 @@ exports.handleUploadFile = async (userId, folderId, file) => {
     file.originalname || "uploaded-file.txt"
   }`;
 
+  await insertFile(userId, filePath);
   await uploadFile(userId, filePath, file);
 };
+
+exports.handleDownloadFile = async (userId, fileId) => {
+  const filePath = await fetchFilePath(fileId);
+  const file = await fetchFile(userId, filePath);
+
+  console.log(file)
+
+  return file;
+}
 
 exports.handleRetrieveFiles = async (userId, folderId) => {
   const parentFolderPath = await fetchFolderPath(folderId);
   const files = (await fetchFiles(userId, parentFolderPath)) || [];
 
-  for (const file of files) {
-    if (file.id) continue;
+  const filteredFiles = files.filter(file => file.name !== ".emptyFolderPlaceholder");
 
+  for (const file of filteredFiles) {
     const filename = file.name;
     const path = `${parentFolderPath ? parentFolderPath + "/" : ""}${filename}`;
 
-    file.folderId = await fetchFolderId(userId, path);
+    const isFolder = !file.id;
+
+    file.isFolder = isFolder;
+    file.id = isFolder ? await fetchFolderId(userId, path) : await fetchFileId(userId, path);
   }
 
-  return files;
+  return filteredFiles;
 };
 
 exports.handleRetrievePathLinks = async (userId, folderId) => {

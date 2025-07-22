@@ -1,20 +1,21 @@
-<nav>
-  <div>
-    <div class="navbarRightContainer">
-      <img src="/icons/server-outline.svg">
-      <h1>FileStore</h1>
+<nav class="border-b-gray-300 border-b bg-white">
+  <div class="mx-auto flex justify-between items-center p-4 max-w-[90rem]">
+    <div class="flex items-center gap-1">
+      <img src="/icons/server-outline.svg" class="w-12">
+      <h1 class="text-2xl font-bold">FileStore</h1>
     </div>
   
-    <div class="navbarLeftContainer">
+    <div>
       <% if ( locals.currentUser ) {%>
-        <div class="profile-dropdown">
-          <button class="profile-button"><%= currentUser.username%></button>
-          <div class="profile-dropdown-content">
-            <a href="/log-out">Log out</a>
+        <div class="relative group">
+          <button class="box-content py-3 px-4 border-0 border-r-(--roundness) font-medium text-lg"><%= currentUser.username%></button>
+          
+          <div class="hidden absolute z-10 bg-gray-200 p-4 rounded-2xl group-hover:block">
+            <a href="/log-out" class="no-underline text-center hover:bg-gray-100">Log out</a>
           </div>
         </div>
       <% } else { %>
-        <a href="/log-in">Log In</a>
+        <a href="/log-in" class="font-medium text-lg">Log In</a>
       <% } %>
     </div>
   </div>
