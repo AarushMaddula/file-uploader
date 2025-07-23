@@ -169,6 +169,49 @@ const createUserBucket = async (userId) => {
   }
 };
 
+const deleteFile = async (userId, path) => {
+  const { data, error } = await supabase
+    .storage
+    .from(userId)
+    .remove([path])
+
+  if (error) {
+    console.log("Error:", error.message, userId, path);
+    throw new Error("Unable to delete file!");
+  }
+}
+
+const deleteFolder = async (userId, path) => {
+  const queue = [path];
+  const filePaths = [];
+
+  while (queue.length > 0) {
+    const currentPath = queue.shift();
+
+    const allFiles = await fetchFiles(userId, currentPath);
+
+    allFiles.forEach(file => {
+      if (file.id) {
+        filePaths.push(`${currentPath}/${file.name}`);
+      } else {
+        queue.push(`${currentPath}/${file.name}`);
+      }
+    });
+  }
+
+  if (filePaths.length === 0) return;
+
+  const { error } = await supabase
+    .storage
+    .from(userId)
+    .remove(filePaths)
+
+  if (error) {
+    console.log("Error:", error.message, userId, path);
+    throw new Error("Unable to delete folder!");
+  }
+}
+
 exports.handleCreateUserBucket = async (userId) => {
   await createUserBucket(userId);
 };
@@ -200,7 +243,10 @@ exports.handleDownloadFile = async (userId, fileId) => {
   const filePath = await fetchFilePath(fileId);
   const file = await fetchFile(userId, filePath);
 
-  console.log(file)
+  const index = filePath.lastIndexOf("/");
+  const filename = index !== -1 ? filePath.slice(index) : filePath;
+
+  file.filename = filename
 
   return file;
 }
@@ -254,3 +300,15 @@ exports.handleRetrievePathLinks = async (userId, folderId) => {
 
   return folders;
 };
+
+exports.handleDeleteFile = async (userId, fileId) => {
+  const filePath = await fetchFilePath(fileId);
+  
+  await deleteFile(userId, filePath);
+}
+
+exports.handleDeleteFolder = async (userId, folderId) => {
+  const folderPath = await fetchFolderPath(folderId);
+
+  await deleteFolder(userId, folderPath);
+}

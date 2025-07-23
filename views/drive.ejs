@@ -104,6 +104,7 @@
               <tr 
                 class="transition-colors duration-100 hover:bg-gray-200" 
                 data-id="<%= file.id %>"
+                data-type="<%= file.isFolder ? 'folder' : 'file' %>"
               >
                 <td class="flex items-center p-3 pl-5">
                   <% if (file.isFolder) {%>
@@ -136,6 +137,15 @@
               <% })} %>
             </tbody>
           </table>
+
+          <div class="dropdown absolute bg-white min-w-40 z-10 shadow-sm/30 hidden">
+            <button class="text-black cursor-pointer block w-full py-3 px-4 text-center download-button hover:bg-gray-300">
+              Download
+            </button>
+            <button class="text-black cursor-pointer block w-full py-3 px-4 text-center delete-button hover:bg-gray-300">
+              Delete
+            </button>
+          </div>
         </main>
       </div>
     </div>

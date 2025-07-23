@@ -1,14 +1,14 @@
 const { Router } = require("express");
 const multer  = require('multer');
+const { format } = require('date-fns');
+const prettyBytes = require('pretty-bytes').default;
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-const { format } = require('date-fns');
-const driveRouter = Router();
-const fs = require('fs');
 
-const prettyBytes = require('pretty-bytes').default;
+const driveRouter = Router();
+
 const storageController = require("../controllers/storageController");
-const { fi } = require("date-fns/locale");
 
 const getModifiedFiles = async (userId, folderId) => {
   const files = await storageController.handleRetrieveFiles(userId, folderId);
@@ -45,7 +45,7 @@ driveRouter.use((req, res, next) => {
 driveRouter.get("/my-drive", async (req, res) => {
   const userId = req.user.id;
   const folderId = -1;
-  
+
   const files = await getModifiedFiles(userId, folderId);
   const links = await storageController.handleRetrievePathLinks(userId, folderId);
   res.render("drive", { user: req.user, files: files, links: links });
@@ -81,7 +81,7 @@ driveRouter.get("/folder/:folder", async (req, res) => {
 
   const files = await getModifiedFiles(userId, folderId);
   const links = await storageController.handleRetrievePathLinks(userId, folderId);
-  res.render("drive", { user: req.user, files: files, links: links });
+  res.render("drive", { user: req.user, files: files, links: links, folderId: folderId });
 })
 
 driveRouter.post("/folder/:folder/create", async (req, res) => {
@@ -91,10 +91,10 @@ driveRouter.post("/folder/:folder/create", async (req, res) => {
 
   try {
     await storageController.handleCreateFolder(userId, folderId, name);
-    res.status(201).redirect(`/folder/${folderId}`);
+    res.status(201).redirect(`/drive/folder/${folderId}`);
   } catch (err) {
     console.error("Create folder error:", err.message);
-    res.status(400).redirect(`/folder/${folderId}`);
+    res.status(400).redirect(`/drive/folder/${folderId}`);
   }
 })
 
@@ -105,7 +105,7 @@ driveRouter.post("/folder/:folder/upload", upload.single('uploaded_file'), async
 
   await storageController.handleUploadFile(userId, folderId, file)
 
-  res.redirect(`/folder/${folderId}`);
+  res.redirect(`/drive/folder/${folderId}`);
 })
 
 driveRouter.get("/file/:file", async (req, res) => {
@@ -117,14 +117,28 @@ driveRouter.get("/file/:file", async (req, res) => {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  res.setHeader("Content-Disposition", `attachment; filename="file.stl"`);
-  res.setHeader("Content-Type", "application/octet-stream");
+  res.setHeader('content-type', 'application/octet-stream');
+  res.attachment(file.filename);
 
-  res.send(buffer)
+  res.send(buffer);
 })
 
-driveRouter.delete("/file/:file", (req, res) => {
+driveRouter.delete("/file/:file", async (req, res) => {
+  const userId = req.user.id;
   const fileId = req.params.file;
+
+  await storageController.handleDeleteFile(userId, fileId);
+
+  res.sendStatus(200)
+})
+
+driveRouter.delete("/folder/:folder", async (req, res) => {
+  const userId = req.user.id;
+  const folderId = req.params.folder;
+
+  await storageController.handleDeleteFolder(userId, folderId);
+
+  res.sendStatus(200);
 })
 
 driveRouter.get("/", async (req, res) => {

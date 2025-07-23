@@ -27,78 +27,58 @@ createFolderCloseButton.addEventListener('click', e => {
 })
 
 const fileDropdownButtons = document.querySelectorAll(".file-dropdown-button")
+const dropdown = document.querySelector('.dropdown');
+const downloadButton = document.querySelector('.download-button');
+const deleteButton = document.querySelector('.delete-button');
+
+let currentId = null;
+let currentType = null;
 
 fileDropdownButtons.forEach(button => {
   button.addEventListener("click", e => {
+    e.stopPropagation();
+
     const row = e.target.closest("tr");
-    const id = row.dataset.id;
+    currentId = row.dataset.id;
+    currentType = row.dataset.type;
 
-    const dropdownContent = document.createElement('div');
-    Object.assign(dropdownContent.style, {
-      position: "absolute",
-      backgroundColor: "#f1f1f1",
-      minWidth: "160px",
-      boxShadow: "0px 8px 16px 0px rgba(0,0,0,0.2)",
-      zIndex: "1"
-    });
+    const x = e.clientX;
+    const y = e.clientY;
 
-    const downloadButton = document.createElement('a');
-    downloadButton.textContent = "Download";
-
-    downloadButton.href = `/drive/file/${id}`;
-    downloadButton.download = ""
-    
-    // downloadButton.addEventListener('click', async e => {
-    //   const res = await fetch(`/drive/file/${id}`, {
-    //     method: "POST",
-    //   })
-
-    //   if (!res.ok) {
-    //     console.error(res.statusText);
-    //     return;
-    //   }
-
-    //   console.log(file)
-    // })
-
-    Object.assign(downloadButton.style, {
-      color: "black",
-      padding: "12px 16px",
-      display: "block",
-      cursor: "pointer",
-      textDecoration: "none"
-    });
-
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = "Delete";
-    deleteButton.addEventListener('click', async e => {
-      
-    })
-
-    Object.assign(deleteButton.style, {
-      color: "black",
-      padding: "12px 16px",
-      display: "block",
-      cursor: "pointer"
-    });
-
-    dropdownContent.append(downloadButton, deleteButton)
-    button.insertAdjacentElement("afterend", dropdownContent)
+    dropdown.style.top = `${y}px`;
+    dropdown.style.left = `${x}px`;
+    dropdown.classList.remove('hidden');
   })
 })
 
-// uploadFileForm.addEventListener('submit', async e => {
-//   e.preventDefault()
+downloadButton.addEventListener("click", async e => {
+  e.stopPropagation();
 
-//   const formData = new FormData(form);
-//   const formUrl = new URL(createFolderForm.action).pathname;
-  
-//   const res = await fetch(formUrl, {
-//     method: "POST",
-//     body: formData,
-//   });
+  const url = `/drive/${currentType}/${currentId}`;
 
-//   if (!res.ok) {
-//     console.error("Something went wrong!", res);
-//   } 
-// })
+  const a = document.createElement("a");
+  a.href = url;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+})
+
+deleteButton.addEventListener("click", async e => {
+  e.stopPropagation();
+
+  const url = `/drive/${currentType}/${currentId}`;
+
+  const res = await fetch(url, {
+    method: 'DELETE'
+  })
+
+  if (!res.ok) {
+    console.error("Unable to delete file")
+    return;
+  } 
+  window.location.reload();
+})
+
+document.addEventListener('click', e => {
+  dropdown.classList.add('hidden');
+});
