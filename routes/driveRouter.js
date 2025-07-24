@@ -65,12 +65,14 @@ driveRouter.post("/my-drive/create", async (req, res) => {
   }
 })
 
-driveRouter.post("/my-drive/upload", upload.single('uploaded_file'), async (req, res) => {
+driveRouter.post("/my-drive/upload", upload.array('uploaded_file'), async (req, res) => {
   const userId = req.user.id;
   const folderId = -1;
-  const file = req.file;
+  const files = req.files;
 
-  await storageController.handleUploadFile(userId, folderId, file)
+  for (const file of files) {
+    await storageController.handleUploadFile(userId, folderId, file)
+  }
 
   res.redirect('/drive/my-drive')
 })
@@ -98,12 +100,14 @@ driveRouter.post("/folder/:folder/create", async (req, res) => {
   }
 })
 
-driveRouter.post("/folder/:folder/upload", upload.single('uploaded_file'), async (req, res) => {
+driveRouter.post("/folder/:folder/upload", upload.array('uploaded_file'), async (req, res) => {
   const userId = req.user.id;
   const folderId = req.params.folder;
-  const file = req.file;
+  const files = req.files;
 
-  await storageController.handleUploadFile(userId, folderId, file)
+  for (const file of files) {
+    await storageController.handleUploadFile(userId, folderId, file)
+  }
 
   res.redirect(`/drive/folder/${folderId}`);
 })
@@ -137,6 +141,26 @@ driveRouter.delete("/folder/:folder", async (req, res) => {
   const folderId = req.params.folder;
 
   await storageController.handleDeleteFolder(userId, folderId);
+
+  res.sendStatus(200);
+})
+
+driveRouter.put("/file/:file", async (req, res) => {
+  const userId = req.user.id;
+  const fileId = req.params.file;
+  const name = req.body.name;
+
+  await storageController.handleRenameFile(userId, fileId, name);
+
+  res.sendStatus(200)
+})
+
+driveRouter.put("/folder/:folder", async (req, res) => {
+  const userId = req.user.id;
+  const folderId = req.params.folder;
+  const name = req.body.name;
+
+  await storageController.handleRenameFolder(userId, folderId, name);
 
   res.sendStatus(200);
 })

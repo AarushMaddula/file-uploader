@@ -1,48 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Sign Up</title>
-	<link rel="stylesheet" href="/styles/index.css">
-	<link rel="stylesheet" href="/styles/authenticationForm.css">
-</head>
+  <body
+    class="flex justify-center items-center h-screen bg-linear-to-br from-gray-800 to-cyan-600"
+  >
+    <div class="p-8 rounded-xl w-sm ring-2 ring-gray-600 shadow-2xl bg-gray-50">
+      <form action="/sign-up" method="post">
+        <h1 class="text-3xl mb-10 font-medium">Sign Up</h1>
 
-<body class="authenticationFormPage">
-	<div class="authenticationFormContainer">
-		<form action="/sign-up" method="post" class="authenticationForm">
-			<h1>Sign Up</h1>
+        <div class="relative mb-4">
+          <label
+            class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-4 left-3 after:content-['*'] after:relative after:text-red-700 after:top-0.5 after:right-0.5 after:text-lg"
+            for="username"
+          >
+            Username
+          </label>
+          <input
+            class="w-full p-3 border border-black rounded-xl"
+            type="text"
+            name="username"
+            id="username"
+            value="<% typeof oldData !== 'undefined' ? oldData.username : ''%>"
+            required
+          />
+        </div>
 
-			<div class="authenticationFormField">
-				<label for="username">Username</label>
-				<input type="text" name="username" id="username" value="<% typeof oldData !== 'undefined' ? oldData.username : ''%>" required>
-			</div>
+        <div class="relative mb-4">
+          <label
+            class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-4 left-3 after:content-['*'] after:relative after:text-red-700 after:top-0.5 after:right-0.5 after:text-lg"
+            for="password"
+          >
+						Password
+					</label>
+          <input
+            class="w-full p-3 border border-black rounded-xl"
+            minlength="1"
+            type="password"
+            name="password"
+            id="password"
+            required
+          />
+        </div>
 
-			<div class="authenticationFormField">
-				<label for="password">Password</label>
-				<input minlength="1" type="password" name="password" id="password" required>
-			</div>
+        <div class="relative mb-2">
+          <label
+            class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-4 left-3 after:content-['*'] after:relative after:text-red-700 after:top-0.5 after:right-0.5 after:text-lg"
+            for="confirm-password"
+          >
+					Retype Password
+					</label>
+          <input
+            class="w-full p-3 border border-black rounded-xl"
+            minlength="1"
+            type="password"
+            name="confirm-password"
+            id="confirm-password"
+            required
+          />
+        </div>
 
-			<div class="authenticationFormField">
-				<label for="confirm-password">Retype Password</label>
-				<input minlength="1" type="password" name="confirm-password" id="confirm-password" required>
-			</div>
+        <% if (locals.errors) { %>
+        <ul
+          class="list-none p-2.5 bg-red-500 text-white my-2.5 rounded-xl text-sm"
+        >
+          <% errors.forEach(err => { %>
+          <li><%= err.msg %></li>
+          <% }) %>
+        </ul>
+        <% } %>
 
-			<% if (locals.errors) { %>
-				<ul class="error-list">
-					<% errors.forEach(err => { %>
-						<li><%= err.msg %></li>
-					<% }) %>
-				</ul>
-			<% } %>
+        <p class="text-sm text-gray-700">
+          Already have an account?
+          <a class="underline" href="/log-in">Log in</a>
+        </p>
 
-			<p>Already have an account? <a href="/log-in">Log in</a></p>
-
-			<button type="submit">Create Account</button>
-		</form>
-
-	</div>
-</body>
-
+        <button
+          type="submit"
+          class="px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30"
+        >
+          Create Account
+        </button>
+      </form>
+    </div>
+  </body>
 </html>

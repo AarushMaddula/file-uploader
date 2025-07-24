@@ -8,10 +8,10 @@
     <div>
       <% if ( locals.currentUser ) {%>
         <div class="relative group">
-          <button class="box-content py-3 px-4 border-0 border-r-(--roundness) font-medium text-lg"><%= currentUser.username%></button>
+          <button class="box-content py-3 px-4 border-0 font-medium text-lg"><%= currentUser.username%></button>
           
-          <div class="hidden absolute z-10 bg-gray-200 p-4 rounded-2xl group-hover:block">
-            <a href="/log-out" class="no-underline text-center hover:bg-gray-100">Log out</a>
+          <div class="hidden absolute z-10 bg-white p-4 w-30 hover:bg-gray-300 border border-gray-300 group-hover:block">
+            <a href="/log-out" class="no-underline text-center ">Log out</a>
           </div>
         </div>
       <% } else { %>

@@ -14,32 +14,61 @@
           <h1 class="text-4xl font-bold pb-4">My Files</h1>
         </header>
 
-        <dialog class="upload-file-dialog mx-auto">
+        <dialog class="upload-file-dialog fixed top-1/2 left-1/2 -translate-1/2 p-8 rounded-xl w-sm ring-2 ring-gray-600 shadow-2xl bg-gray-50">
           <form
             method="post"
             action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/upload"
             enctype="multipart/form-data"
-            class="flex flex-col items-center"
           >
-            <h2>Upload File</h2>
-            <input type="file" name="uploaded_file" />
-            <div class="flex">
-              <button type="button" class="close-button">Close</button>
-              <button type="submit">Submit</button>
+            <h1 class="text-3xl mb-10 font-medium">Upload File</h1>
+
+            <div class="relative mb-2">
+              <label class="block w-full cursor-pointer">
+                <div class="file w-full p-3 border border-black rounded-xl text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all">
+                  Click to upload file
+                </div>
+                <input type="file" name="uploaded_file" id="uploaded_file" class="hidden" multiple/>
+              </label>
+
+            </div>
+            <div class="flex justify-between">
+              <button type="button" class="close-button px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Close</button>
+              <button type="submit" class="px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Upload</button>
             </div>
           </form>
         </dialog>
 
-        <dialog class="create-folder-dialog mx-auto">
+        <dialog class="create-folder-dialog fixed top-1/2 left-1/2 -translate-1/2 p-8 rounded-xl w-sm ring-2 ring-gray-600 shadow-2xl bg-gray-50">
           <form
             method="post"
             action="/drive/<%= locals.folderId ? 'folder/' + locals.folderId : 'my-drive' %>/create"
           >
-            <h2>Upload File</h2>
-            <input type="text" name="name" />
-            <div class="flex">
-              <button type="button" class="close-button">Close</button>
-              <button type="submit">Create</button>
+            <h1 class="text-3xl mb-10 font-medium">Create Folder</h2>
+            
+            <div class="relative mb-2">
+              <label for="name" class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-2.5 left-3">Name</label>
+              <input type="text" name="name" id="name" class="w-full p-3 border border-black rounded-xl"/>
+            </div>
+
+            <div class="flex justify-between">
+              <button type="button" class="close-button px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Close</button>
+              <button type="submit" class="px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Create</button>
+            </div>
+          </form>
+        </dialog>
+
+        <dialog class="rename-folder-dialog fixed top-1/2 left-1/2 -translate-1/2 p-8 rounded-xl w-sm ring-2 ring-gray-600 shadow-2xl bg-gray-50">
+          <form>
+            <h1 class="text-3xl mb-10 font-medium">Rename Folder</h2>
+            
+            <div class="relative mb-2">
+              <label for="name" class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-2.5 left-3">Name</label>
+              <input type="text" name="name" id="name" class="rename-input w-full p-3 border border-black rounded-xl"/>
+            </div>
+
+            <div class="flex justify-between">
+              <button type="button" class="close-button px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Close</button>
+              <button type="submit" class="px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30">Rename</button>
             </div>
           </form>
         </dialog>
@@ -56,12 +85,6 @@
               class="create-folder-button flex justify-center items-center p-2 border-r border-gray-300 cursor-pointer"
             >
               <img src="/icons/folder-outline.svg" class="size-6" />
-            </button>
-
-            <button
-              class="flex items-center p-2 border-r border-gray-300 cursor-pointer"
-            >
-              <img src="/icons/link.svg" class="size-6" />
             </button>
             
             <nav aria-label="Breadcrumb" class="ml-1 py-2 px-2 text-lg">
@@ -95,7 +118,7 @@
               <tr class="border-b border-b-gray-200 border-solid text-lg">
                 <th class="p-2 pl-5 text-left">Name</th>
                 <th class="p-2 text-left">Size</th>
-                <th class="p-2 text-left">Date</th>
+                <th class="p-2 text-left">Date Created</th>
               </tr>
             </thead>
 
@@ -105,6 +128,7 @@
                 class="transition-colors duration-100 hover:bg-gray-200" 
                 data-id="<%= file.id %>"
                 data-type="<%= file.isFolder ? 'folder' : 'file' %>"
+                data-name="<%= file.filename %>"
               >
                 <td class="flex items-center p-3 pl-5">
                   <% if (file.isFolder) {%>
@@ -138,11 +162,14 @@
             </tbody>
           </table>
 
-          <div class="dropdown absolute bg-white min-w-40 z-10 shadow-sm/30 hidden">
-            <button class="text-black cursor-pointer block w-full py-3 px-4 text-center download-button hover:bg-gray-300">
+          <div class="dropdown absolute bg-white z-10 shadow-sm/30 hidden w-40 -translate-x-full">
+            <button class="download-button text-black cursor-pointer w-full py-3 px-4 pl-8 text-left hover:bg-gray-300">
               Download
             </button>
-            <button class="text-black cursor-pointer block w-full py-3 px-4 text-center delete-button hover:bg-gray-300">
+            <button class="rename-button text-black cursor-pointer w-full py-3 px-4 pl-8 text-left hover:bg-gray-300">
+              Rename
+            </button>
+            <button class="delete-button text-black cursor-pointer w-full py-3 px-4 pl-8 text-left hover:bg-gray-300">
               Delete
             </button>
           </div>

@@ -1,43 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+  </head>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Log in</title>
-	<link rel="stylesheet" href="/styles/index.css">
-	<link rel="stylesheet" href="/styles/authenticationForm.css">
-</head>
+  <body class="flex justify-center items-center h-screen bg-linear-to-br from-gray-800 to-cyan-600">
+    <div
+      class="p-8 rounded-xl w-sm ring-2 ring-gray-600 shadow-2xl bg-gray-50"
+    >
+      <form action="/log-in" method="post">
+        <h1 class="text-3xl mb-10 font-medium">Login</h1>
 
-<body class="authenticationFormPage">
-	<div class="authenticationFormContainer">
-		<form action="/log-in" method="post" class="authenticationForm">
-			<h1>Log in</h1>
+        <div class="relative mb-4">
+          <label
+            class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-2.5 left-3"
+            for="username"
+          >
+            Username
+          </label>
+          <input
+            class="w-full p-3 border border-black rounded-xl"
+            type="text"
+            name="username"
+            id="username"
+          />
+        </div>
 
-			<div class="authenticationFormField">
-				<label for="username">Username</label>
-				<input type="text" name="username" id="username">
-			</div>
+        <div class="relative mb-2">
+          <label
+            class="absolute text-sm text-gray-800 bg-gray-50 px-1 -top-2.5 left-3"
+            for="password"
+          >
+            Password
+          </label>
 
-			<div class="authenticationFormField">
-				<label for="password">Password</label>
-				<input type="password" name="password" id="password">
-			</div>
-		
-			<% if (locals.messages && locals.messages.length > 0) { %>
-				<ul class="error-list">
-					<% messages.forEach(msg => { %>
-						<li><%= msg %></li>
-					<% }) %>
-				</ul>
-			<% } %>
+          <input
+            class="w-full p-3 border border-black rounded-xl"
+            type="password"
+            name="password"
+            id="password"
+          />
+        </div>
 
-			<p>Don't have an account? <a href="/sign-up">Sign up</a></p>
+        <% if (locals.messages && locals.messages.length > 0) { %>
+        <ul
+          class="list-none p-2.5 bg-red-500 text-white my-2.5 rounded-xl text-sm"
+        >
+          <% messages.forEach(msg => { %>
+          <li><%= msg %></li>
+          <% }) %>
+        </ul>
+        <% } %>
 
-			<button type="submit">Log in</button>
-		</form>
+        <p class="text-sm text-gray-700">
+          Don't have an account? <a class="underline" href="/sign-up">Sign up</a>
+        </p>
 
-	</div>
-</body>
-
+        <button
+          type="submit"
+          class="px-4 py-3 mt-6 font-medium border-0 rounded-xl bg-gray-200 self-end shadow-xs shadow-black/30"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </body>
 </html>

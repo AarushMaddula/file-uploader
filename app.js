@@ -83,6 +83,7 @@ app.use(
 )
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false}))
+app.use(express.json());
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;
   res.locals.messages = req.session.messages || [];
@@ -95,7 +96,7 @@ app.use("/", authenticationRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).send(err);
+  res.status(500).send(`<h1>An unexpected error occured!</h1>`);
 });
 
 
